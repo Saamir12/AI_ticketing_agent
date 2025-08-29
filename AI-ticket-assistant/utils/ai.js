@@ -1,6 +1,7 @@
 import { createAgent, gemini } from "@inngest/agent-kit";
 
 const analyzeTicket = async (ticket) => {
+  
   const supportAgent = createAgent({
     model: gemini({
       model: "gemini-1.5-flash-8b",
@@ -49,17 +50,25 @@ Ticket information:
 - Title: ${ticket.title}
 - Description: ${ticket.description}`);
 
-  const raw = response?.output[0]?.context
+  const raw = response?.output[0]?.content
+  // const raw = response
 
-  try {
-    console.log("Raw AI response:", raw);
-    const match = raw.match(/```json\s*([\s\S]*?)\s*```/i);
-    const jsonString = match ? match[1] : raw.trim();
-    return JSON.parse(jsonString);
-  } catch (e) {
-    console.log("Failed to parse JSON from AI response" + e.message);
-    return null; // watch out for this
+try {
+  console.log("Raw AI response:", raw);
+  let jsonString = raw.trim();
+
+  // Optional: remove markdown fences if present
+  if (jsonString.startsWith("```json")) {
+    jsonString = jsonString.replace(/```json\s*([\s\S]*?)\s*```/i, "$1").trim();
   }
+
+  console.log({ jsonString });
+  return JSON.parse(jsonString);
+} catch (e) {
+  console.error("❌ Failed to parse JSON from AI response:", e.message);
+  return null;
+}
+
 };
 
 export default analyzeTicket;
