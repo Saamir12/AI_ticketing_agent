@@ -38,9 +38,11 @@ export default function TicketDetailsPage() {
   }, [id]);
 
   if (loading)
-    return <button className="btn btn-square">
-  <span className="loading loading-spinner">Loading ticket details...</span>
-</button> ;
+    return <div className="flex items-center justify-center min-h-screen">
+  <span className="loading loading-spinner text-primary"></span>
+  <span className="ml-2">Loading ticket details...</span>
+</div>
+
   if (!ticket) return <div className="text-center mt-10">Ticket not found</div>;
 
   return (
